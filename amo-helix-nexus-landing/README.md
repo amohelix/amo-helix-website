@@ -38,3 +38,16 @@ Then open `http://localhost:8080`.
 - Confirm trademark and domain clearance.
 - Replace any product statements that are not yet implemented with verified launch capabilities.
 - Add analytics only after selecting a privacy approach.
+
+
+## v4 — Locked approved AMO Helix brand assets
+
+This release removes all improvised or regenerated logo substitutes.
+
+Authoritative assets:
+- `assets/amo-helix-approved-icon-v4-*.png`: exact crop of the approved dark AMO app icon from the user-supplied brand board.
+- `assets/amo-helix-approved-long-logo-v4.png`: transparent derivative of the exact user-approved long AMO + mechanical helix + HELIX artwork.
+- `assets/APPROVED-BRAND-BOARD-SOURCE.jpg`: untouched approved brand-board source.
+- `assets/APPROVED-LONG-LOGO-SOURCE.jpg`: untouched approved long-logo source.
+
+Do not replace these assets without explicit approval.
