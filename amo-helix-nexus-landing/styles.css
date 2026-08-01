@@ -75,14 +75,26 @@ img { max-width: 100%; display: block; }
 .site-header.scrolled { border-color: var(--line); background: rgba(5,8,16,.9); }
 .nav-shell { min-height: 78px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .brand { display: flex; align-items: center; gap: 12px; }
-.brand-lockup img {
-  width: 248px;
-  height: auto;
-  max-height: 58px;
-  object-fit: contain;
-  object-position: left center;
-  filter: drop-shadow(0 0 18px rgba(20,120,255,.13));
+
+.brand-lockup {
+  width: 330px;
+  height: 58px;
+  flex: 0 0 330px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
 }
+
+.brand-lockup img {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: cover;
+  object-position: center;
+  filter: none;
+}
+
 .site-nav { display: flex; align-items: center; gap: 30px; font-size: .92rem; color: #c4cedb; }
 .site-nav a { transition: color .2s; }
 .site-nav a:hover, .site-nav a:focus-visible { color: white; }
@@ -289,7 +301,18 @@ blockquote { margin: 18px 34px 28px; font-size: 1.1rem; line-height: 1.7; color:
   .site-nav.open { display: flex; }
   .site-nav a { padding: 13px; }
   .nav-cta { margin-top: 5px; text-align: center; }
-  .brand-lockup img { width: 190px; max-height: 52px; }
+
+  .brand-lockup {
+    width: 205px;
+    height: 46px;
+    flex-basis: 205px;
+  }
+
+  .brand-lockup img {
+    width: 100%;
+    height: 100%;
+  }
+
   h1 { font-size: clamp(3rem, 15vw, 5rem); }
   .hero { padding-top: 70px; }
   .hero-grid { gap: 42px; }
