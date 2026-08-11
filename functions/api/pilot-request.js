@@ -14,6 +14,7 @@ const clean = (value, max = 2000) =>
     .slice(0, max);
 
 const validEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+const DEFAULT_PILOT_REQUEST_TO = "frameleads@gmail.com";
 
 async function readPayload(request) {
   const type = request.headers.get("content-type") || "";
@@ -103,7 +104,9 @@ async function sendWebhook(env, lead) {
 }
 
 async function sendResendEmail(env, lead) {
-  if (!env.RESEND_API_KEY || !env.PILOT_REQUEST_TO || !env.PILOT_REQUEST_FROM) return false;
+  const to = clean(env.PILOT_REQUEST_TO, 254) || DEFAULT_PILOT_REQUEST_TO;
+
+  if (!env.RESEND_API_KEY || !env.PILOT_REQUEST_FROM) return false;
 
   const subject = `AMO Helix pilot request: ${lead.company}`;
   const text = [
@@ -127,7 +130,7 @@ async function sendResendEmail(env, lead) {
     },
     body: JSON.stringify({
       from: env.PILOT_REQUEST_FROM,
-      to: [env.PILOT_REQUEST_TO],
+      to: [to],
       reply_to: lead.email,
       subject,
       text,
@@ -172,8 +175,20 @@ export async function onRequestPost({ request, env }) {
 
   try {
     const storedInD1 = await storeLead(env, lead);
-    const deliveredByWebhook = await sendWebhook(env, lead);
-    const deliveredByEmail = await sendResendEmail(env, lead);
+    let deliveredByWebhook = false;
+    let deliveredByEmail = false;
+
+    try {
+      deliveredByWebhook = await sendWebhook(env, lead);
+    } catch (error) {
+      deliveredByWebhook = false;
+    }
+
+    try {
+      deliveredByEmail = await sendResendEmail(env, lead);
+    } catch (error) {
+      deliveredByEmail = false;
+    }
 
     if (!storedInD1 && !deliveredByWebhook && !deliveredByEmail) {
       return json(

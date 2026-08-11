@@ -61,7 +61,7 @@ Recent requests can be reviewed at `/pilot-requests.html`. The private inbox cal
 ### Email delivery with Resend
 
 - `RESEND_API_KEY`: Resend API key.
-- `PILOT_REQUEST_TO`: inbox that receives pilot requests.
+- `PILOT_REQUEST_TO`: inbox that receives pilot requests. Defaults to `frameleads@gmail.com`.
 - `PILOT_REQUEST_FROM`: verified sender, for example `AMO Helix <pilot@amohelix.com>`.
 
 ## Before public launch
