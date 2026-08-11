@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#050810" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>AMO Helix Pilot Requests</title>
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/amo-helix-approved-icon-v4-64.png" />
+  <link rel="stylesheet" href="styles.css?v=20260811c" />
+</head>
+<body class="admin-page">
+  <main class="admin-main">
+    <section class="shell admin-panel">
+      <div class="admin-header">
+        <a class="brand brand-lockup admin-brand" href="/" aria-label="AMO Helix home">
+          <img src="assets/amo-helix-approved-long-logo-v4.png" alt="AMO Helix" />
+        </a>
+        <a class="button button-secondary" href="/">Back to site</a>
+      </div>
+
+      <div class="admin-intro">
+        <p class="eyebrow"><span></span> PILOT REQUESTS</p>
+        <h1>Lead inbox</h1>
+        <p>Recent Request a Pilot submissions from amohelix.com.</p>
+      </div>
+
+      <form class="access-form" id="access-form">
+        <label>
+          <span>Access key</span>
+          <input type="password" id="access-token" autocomplete="current-password" placeholder="Enter access key" required />
+        </label>
+        <button class="button button-primary" type="submit">Load requests</button>
+      </form>
+
+      <div class="admin-toolbar" id="admin-toolbar" hidden>
+        <p id="lead-count">0 requests</p>
+        <button class="button button-secondary" id="download-csv" type="button">Download CSV</button>
+      </div>
+
+      <p class="form-status" id="admin-status" role="status" aria-live="polite"></p>
+      <div class="lead-list" id="lead-list"></div>
+    </section>
+  </main>
+
+  <script src="pilot-requests.js?v=20260811c"></script>
+</body>
+</html>

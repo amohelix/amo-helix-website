@@ -10,6 +10,7 @@ A responsive, dependency-free landing page for **Nexus by AMO Helix**.
 - Configurable industry examples
 - Human-review and governance positioning
 - Pilot inquiry form with a Cloudflare Pages Function endpoint
+- Private pilot request inbox and CSV export
 - Mobile navigation
 - Accessibility basics and reduced-motion support
 - Favicons and brand imagery
@@ -38,11 +39,19 @@ The pilot form posts to `/api/pilot-request`, implemented in the repository-leve
 
 Configure at least one delivery path in Cloudflare Pages.
 
+Recent requests can be reviewed at `/pilot-requests.html`. The private inbox calls `/api/pilot-requests`, which requires `PILOT_REQUESTS_ACCESS_TOKEN` as a runtime variable.
+
 ### Cloudflare D1 storage
 
 - Create a D1 database for pilot requests.
 - Add it to the Pages project as a D1 binding named `PILOT_REQUESTS_DB`.
 - The function creates the `pilot_requests` table automatically on first successful submission.
+
+### Private lead inbox
+
+- `PILOT_REQUESTS_ACCESS_TOKEN`: access key for `/pilot-requests.html` and `/api/pilot-requests`.
+- The inbox shows the latest 100 pilot requests.
+- CSV export is available from the inbox after entering the access key.
 
 ### Webhook delivery
 
