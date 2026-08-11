@@ -407,6 +407,13 @@ blockquote { margin: 18px 34px 28px; font-size: 1.1rem; line-height: 1.7; color:
   color: var(--muted);
   font-weight: 700;
 }
+.admin-actions,
+.lead-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
 .lead-list {
   display: grid;
   gap: 12px;
@@ -441,6 +448,15 @@ blockquote { margin: 18px 34px 28px; font-size: 1.1rem; line-height: 1.7; color:
 .lead-card-head a {
   color: var(--cyan);
   overflow-wrap: anywhere;
+}
+.delete-lead {
+  color: #8fa0b6;
+  font-size: .78rem;
+  padding: 0;
+}
+.delete-lead:hover,
+.delete-lead:focus-visible {
+  color: var(--danger);
 }
 .lead-card dl {
   display: grid;
@@ -550,6 +566,8 @@ blockquote { margin: 18px 34px 28px; font-size: 1.1rem; line-height: 1.7; color:
   .admin-header,
   .admin-toolbar,
   .lead-card-head { align-items: flex-start; flex-direction: column; }
+  .admin-actions,
+  .lead-card-actions { align-items: flex-start; flex-direction: column; }
   .admin-brand {
     width: 218px;
     height: 46px;

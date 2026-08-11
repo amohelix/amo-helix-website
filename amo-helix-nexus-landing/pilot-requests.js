@@ -5,6 +5,7 @@ const list = document.querySelector('#lead-list');
 const toolbar = document.querySelector('#admin-toolbar');
 const leadCount = document.querySelector('#lead-count');
 const downloadButton = document.querySelector('#download-csv');
+const deleteTestsButton = document.querySelector('#delete-tests');
 
 let accessToken = sessionStorage.getItem('pilotRequestsAccessToken') || '';
 
@@ -34,6 +35,24 @@ function setStatus(message, isError = false) {
   status.classList.toggle('error', isError);
 }
 
+async function deleteRequest(payload) {
+  const response = await fetch('/api/pilot-requests', {
+    method: 'DELETE',
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  });
+  const result = await response.json().catch(() => ({}));
+
+  if (!response.ok || !result.ok) {
+    throw new Error(result.message || 'Pilot request could not be deleted.');
+  }
+
+  return result;
+}
+
 function renderLeads(leads) {
   toolbar.hidden = false;
   leadCount.textContent = `${leads.length} ${leads.length === 1 ? 'request' : 'requests'}`;
@@ -44,13 +63,16 @@ function renderLeads(leads) {
   }
 
   list.innerHTML = leads.map((lead) => `
-    <article class="lead-card">
+    <article class="lead-card" data-lead-id="${escapeHtml(lead.id)}">
       <div class="lead-card-head">
         <div>
           <span>${escapeHtml(formatDate(lead.submittedAt))}</span>
           <h2>${escapeHtml(lead.company)}</h2>
         </div>
-        <a href="mailto:${encodeURIComponent(lead.email)}">${escapeHtml(lead.email)}</a>
+        <div class="lead-card-actions">
+          <a href="mailto:${encodeURIComponent(lead.email)}">${escapeHtml(lead.email)}</a>
+          <button class="text-button delete-lead" type="button" data-lead-id="${escapeHtml(lead.id)}">Delete</button>
+        </div>
       </div>
       <dl>
         <div><dt>Name</dt><dd>${escapeHtml(lead.name)}</dd></div>
@@ -114,6 +136,32 @@ downloadButton.addEventListener('click', async () => {
     link.click();
     link.remove();
     URL.revokeObjectURL(url);
+  } catch (error) {
+    setStatus(error.message, true);
+  }
+});
+
+deleteTestsButton.addEventListener('click', async () => {
+  if (!accessToken) return;
+
+  try {
+    setStatus('Removing test requests...');
+    const result = await deleteRequest({ deleteTests: true });
+    setStatus(`${result.deleted || 0} test requests removed.`);
+    await loadLeads();
+  } catch (error) {
+    setStatus(error.message, true);
+  }
+});
+
+list.addEventListener('click', async (event) => {
+  const button = event.target.closest('.delete-lead');
+  if (!button || !accessToken) return;
+
+  try {
+    setStatus('Deleting pilot request...');
+    await deleteRequest({ id: button.dataset.leadId });
+    await loadLeads();
   } catch (error) {
     setStatus(error.message, true);
   }

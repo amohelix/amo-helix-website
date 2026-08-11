@@ -79,6 +79,43 @@ async function listLeads(env) {
   return result.results || [];
 }
 
+async function deleteLead(env, id) {
+  if (!env.PILOT_REQUESTS_DB) {
+    throw new Error("Pilot request database is not configured.");
+  }
+
+  await ensureSchema(env.PILOT_REQUESTS_DB);
+  await env.PILOT_REQUESTS_DB.prepare("DELETE FROM pilot_requests WHERE id = ?").bind(id).run();
+}
+
+async function deleteTestLeads(env) {
+  if (!env.PILOT_REQUESTS_DB) {
+    throw new Error("Pilot request database is not configured.");
+  }
+
+  await ensureSchema(env.PILOT_REQUESTS_DB);
+  const result = await env.PILOT_REQUESTS_DB.prepare(
+    `DELETE FROM pilot_requests
+    WHERE lower(email) IN (
+      'production-test@example.com',
+      'preview-alias@example.com',
+      'preview-test-2@example.com',
+      'live-inbox-test@example.com',
+      'status-copy-test@example.com',
+      'final-live-check@example.com'
+    )
+    RETURNING id`
+  ).all();
+
+  return result.results || [];
+}
+
+async function readDeletePayload(request) {
+  const type = request.headers.get("content-type") || "";
+  if (!type.includes("application/json")) return {};
+  return request.json();
+}
+
 function csv(leads) {
   const headers = ["Submitted", "Name", "Email", "Company", "Role", "Workflow", "Page"];
   const rows = leads.map((lead) => [
@@ -115,6 +152,31 @@ export async function onRequestGet({ request, env }) {
     return json({ ok: true, leads });
   } catch (error) {
     return json({ ok: false, message: "Pilot requests could not be loaded." }, 502);
+  }
+}
+
+export async function onRequestDelete({ request, env }) {
+  const access = hasAccess(request, env);
+  if (!access.ok) return json({ ok: false, message: access.message }, access.status);
+
+  try {
+    const body = await readDeletePayload(request);
+    const id = clean(body.id, 80);
+    const deleteTests = body.deleteTests === true;
+
+    if (deleteTests) {
+      const deleted = await deleteTestLeads(env);
+      return json({ ok: true, deleted: deleted.length });
+    }
+
+    if (!id) {
+      return json({ ok: false, message: "Select a pilot request to delete." }, 400);
+    }
+
+    await deleteLead(env, id);
+    return json({ ok: true, deleted: 1 });
+  } catch (error) {
+    return json({ ok: false, message: "Pilot request could not be deleted." }, 502);
   }
 }
 
