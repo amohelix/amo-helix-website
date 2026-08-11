@@ -34,7 +34,7 @@ Then open `http://localhost:8080`.
 
 ## Pilot request delivery
 
-The pilot form posts to `/api/pilot-request`, implemented in `functions/api/pilot-request.js`.
+The pilot form posts to `/api/pilot-request`, implemented in the repository-level `functions/api/pilot-request.js`.
 
 Configure at least one delivery path in Cloudflare Pages.
 

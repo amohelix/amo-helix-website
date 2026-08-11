@@ -26,27 +26,6 @@ async function readPayload(request) {
   return Object.fromEntries(form.entries());
 }
 
-async function sendWebhook(env, lead) {
-  if (!env.PILOT_REQUEST_WEBHOOK_URL) return false;
-
-  const headers = { "content-type": "application/json" };
-  if (env.PILOT_REQUEST_WEBHOOK_SECRET) {
-    headers.authorization = `Bearer ${env.PILOT_REQUEST_WEBHOOK_SECRET}`;
-  }
-
-  const response = await fetch(env.PILOT_REQUEST_WEBHOOK_URL, {
-    method: "POST",
-    headers,
-    body: JSON.stringify(lead),
-  });
-
-  if (!response.ok) {
-    throw new Error("Pilot request webhook rejected the submission.");
-  }
-
-  return true;
-}
-
 async function storeLead(env, lead) {
   if (!env.PILOT_REQUESTS_DB) return false;
 
@@ -98,6 +77,27 @@ async function storeLead(env, lead) {
       lead.submittedAt
     )
     .run();
+
+  return true;
+}
+
+async function sendWebhook(env, lead) {
+  if (!env.PILOT_REQUEST_WEBHOOK_URL) return false;
+
+  const headers = { "content-type": "application/json" };
+  if (env.PILOT_REQUEST_WEBHOOK_SECRET) {
+    headers.authorization = `Bearer ${env.PILOT_REQUEST_WEBHOOK_SECRET}`;
+  }
+
+  const response = await fetch(env.PILOT_REQUEST_WEBHOOK_URL, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(lead),
+  });
+
+  if (!response.ok) {
+    throw new Error("Pilot request webhook rejected the submission.");
+  }
 
   return true;
 }
