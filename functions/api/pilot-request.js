@@ -144,6 +144,38 @@ async function sendResendEmail(env, lead) {
   return true;
 }
 
+async function sendFormSubmitEmail(env, lead) {
+  const to = clean(env.PILOT_REQUEST_TO, 254) || DEFAULT_PILOT_REQUEST_TO;
+  if (env.RESEND_API_KEY || env.PILOT_REQUEST_DISABLE_FORMSUBMIT === "true") return false;
+
+  const response = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(to)}`, {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      _subject: `AMO Helix pilot request: ${lead.company}`,
+      _template: "table",
+      _captcha: "false",
+      _replyto: lead.email,
+      name: lead.name,
+      email: lead.email,
+      company: lead.company,
+      role: lead.role || "Not provided",
+      workflow: lead.workflow,
+      page: lead.page,
+      submitted_at: lead.submittedAt,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Pilot request email fallback rejected the submission.");
+  }
+
+  return true;
+}
+
 export async function onRequestPost({ request, env }) {
   let body;
 
@@ -186,6 +218,12 @@ export async function onRequestPost({ request, env }) {
 
     try {
       deliveredByEmail = await sendResendEmail(env, lead);
+    } catch (error) {
+      deliveredByEmail = false;
+    }
+
+    try {
+      deliveredByEmail = deliveredByEmail || (await sendFormSubmitEmail(env, lead));
     } catch (error) {
       deliveredByEmail = false;
     }
