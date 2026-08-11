@@ -85,10 +85,43 @@ document.querySelectorAll('.reveal').forEach(element => observer.observe(element
 document.querySelector('#pilot-form').addEventListener('submit', event => {
   event.preventDefault();
   const form = event.currentTarget;
-  const company = form.elements.company.value.trim();
+  const submitButton = form.querySelector('button[type="submit"]');
   const status = form.querySelector('.form-status');
-  status.textContent = `Thanks${company ? `, ${company}` : ''}. This prototype form is ready to connect to your CRM or email service.`;
-  form.reset();
+  const originalLabel = submitButton.textContent;
+  const formData = new FormData(form);
+  const payload = Object.fromEntries(formData.entries());
+
+  status.classList.remove('error');
+  status.textContent = 'Sending your pilot request...';
+  submitButton.disabled = true;
+  submitButton.textContent = 'Sending request';
+
+  fetch(form.action, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      ...payload,
+      page: window.location.href
+    })
+  })
+    .then(async response => {
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.ok) {
+        throw new Error(result.message || 'We could not send the request. Please try again.');
+      }
+
+      const company = form.elements.company.value.trim();
+      status.textContent = `Thanks${company ? `, ${company}` : ''}. Your pilot request was sent.`;
+      form.reset();
+    })
+    .catch(error => {
+      status.classList.add('error');
+      status.textContent = error.message || 'We could not send the request. Please try again.';
+    })
+    .finally(() => {
+      submitButton.disabled = false;
+      submitButton.textContent = originalLabel;
+    });
 });
 
 document.querySelector('#year').textContent = new Date().getFullYear();

@@ -5,10 +5,11 @@ A responsive, dependency-free landing page for **Nexus by AMO Helix**.
 ## What is included
 
 - Branded responsive homepage
+- 15-second AMO Helix intro film
 - Voice AI product demonstration
 - Configurable industry examples
 - Human-review and governance positioning
-- Pilot inquiry form interaction
+- Pilot inquiry form with a Cloudflare Pages Function endpoint
 - Mobile navigation
 - Accessibility basics and reduced-motion support
 - Favicons and brand imagery
@@ -31,9 +32,25 @@ Then open `http://localhost:8080`.
 4. Output directory: `/`.
 5. Connect your domain after deployment.
 
+## Pilot request delivery
+
+The pilot form posts to `/api/pilot-request`, implemented in `functions/api/pilot-request.js`.
+
+Configure at least one delivery path in Cloudflare Pages environment variables:
+
+### Webhook delivery
+
+- `PILOT_REQUEST_WEBHOOK_URL`: HTTPS endpoint for Zapier, Make, Slack workflow, CRM, or an internal lead receiver.
+- `PILOT_REQUEST_WEBHOOK_SECRET`: optional bearer token sent in the `Authorization` header.
+
+### Email delivery with Resend
+
+- `RESEND_API_KEY`: Resend API key.
+- `PILOT_REQUEST_TO`: inbox that receives pilot requests.
+- `PILOT_REQUEST_FROM`: verified sender, for example `AMO Helix <pilot@amohelix.com>`.
+
 ## Before public launch
 
-- Replace the prototype pilot form handler in `script.js` with your CRM, email, or backend endpoint.
 - Add final legal pages: Privacy, Terms, Cookie Notice, and Accessibility.
 - Confirm trademark and domain clearance.
 - Replace any product statements that are not yet implemented with verified launch capabilities.

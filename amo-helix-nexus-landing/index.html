@@ -33,6 +33,7 @@
       </button>
 
       <nav id="site-nav" class="site-nav" aria-label="Primary navigation">
+        <a href="#intro">Intro</a>
         <a href="#platform">Platform</a>
         <a href="#voice">Voice AI</a>
         <a href="#industries">Industries</a>
@@ -51,7 +52,7 @@
           <p class="hero-lede">Nexus captures what people say, see, and do—then turns it into structured, reviewable knowledge the next person can actually use.</p>
           <div class="hero-actions">
             <a class="button button-primary" href="#pilot">Request a pilot</a>
-            <a class="button button-secondary" href="#voice">See Nexus work <span aria-hidden="true">→</span></a>
+            <a class="button button-secondary" href="#intro">Watch the intro <span aria-hidden="true">→</span></a>
           </div>
           <div class="proof-row" aria-label="Platform capabilities">
             <span>Voice-first capture</span>
@@ -120,6 +121,28 @@
     <section class="logo-strip" aria-label="Industries Nexus can support">
       <div class="shell logo-strip-inner">
         <span>FIELD SERVICE</span><span>LOGISTICS</span><span>HEALTHCARE OPERATIONS</span><span>MANUFACTURING</span><span>FACILITIES</span>
+      </div>
+    </section>
+
+    <section class="section intro-section" id="intro">
+      <div class="shell intro-grid">
+        <div class="intro-copy reveal">
+          <p class="eyebrow"><span></span> 15-SECOND INTRO</p>
+          <h2>From field work to operational memory.</h2>
+          <p>The AMO Helix intro film shows the core loop: a real field job becomes an AMO Brief, Nexus captures the evidence, people verify the record, and the organization keeps the lesson.</p>
+          <div class="intro-steps" aria-label="Intro film sequence">
+            <span>Field job</span>
+            <span>AMO Brief</span>
+            <span>Nexus capture</span>
+            <span>Verified memory</span>
+            <span>AMO Helix</span>
+          </div>
+        </div>
+        <div class="intro-player reveal">
+          <video controls playsinline preload="metadata" poster="assets/amo-helix-intro-film-poster.jpg" aria-label="AMO Helix 15-second intro film">
+            <source src="assets/amo-helix-intro-film.mp4" type="video/mp4" />
+          </video>
+        </div>
       </div>
     </section>
 
@@ -283,18 +306,30 @@
           <h2>Put Nexus into a real workflow.</h2>
           <p>Start with one team, one operational problem, and measurable outcomes. We’ll configure the workflow, evidence, review process, and success criteria around the pilot.</p>
         </div>
-        <form class="pilot-form" id="pilot-form">
+        <form class="pilot-form" id="pilot-form" action="/api/pilot-request" method="post">
+          <label>
+            <span>Name</span>
+            <input type="text" name="name" placeholder="Your name" autocomplete="name" required />
+          </label>
           <label>
             <span>Work email</span>
-            <input type="email" name="email" placeholder="you@company.com" required />
+            <input type="email" name="email" placeholder="you@company.com" autocomplete="email" required />
           </label>
           <label>
             <span>Company</span>
-            <input type="text" name="company" placeholder="Company name" required />
+            <input type="text" name="company" placeholder="Company name" autocomplete="organization" required />
+          </label>
+          <label>
+            <span>Role</span>
+            <input type="text" name="role" placeholder="Operations, service, IT, leadership" autocomplete="organization-title" />
           </label>
           <label class="full-field">
             <span>What workflow should Nexus improve?</span>
             <textarea name="workflow" rows="3" placeholder="Service visits, delivery exceptions, patient rounds, equipment handoffs…" required></textarea>
+          </label>
+          <label class="bot-field" aria-hidden="true">
+            <span>Website</span>
+            <input type="text" name="website" tabindex="-1" autocomplete="off" />
           </label>
           <button class="button button-primary full-field" type="submit">Request a pilot conversation</button>
           <p class="form-status full-field" role="status" aria-live="polite"></p>
@@ -312,7 +347,7 @@
         <img src="assets/nexus-approved-product-lockup-v4.png" alt="Nexus by AMO Helix" />
         <small>Turn operational experience into reusable intelligence.</small>
       </div>
-      <div class="footer-links"><a href="#platform">Platform</a><a href="#industries">Industries</a><a href="#security">Trust</a><a href="#pilot">Pilot</a></div>
+      <div class="footer-links"><a href="#intro">Intro</a><a href="#platform">Platform</a><a href="#industries">Industries</a><a href="#security">Trust</a><a href="#pilot">Pilot</a></div>
       <p class="copyright">© <span id="year"></span> AMO Helix. All rights reserved.</p>
     </div>
   </footer>
