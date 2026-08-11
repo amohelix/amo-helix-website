@@ -47,6 +47,61 @@ async function sendWebhook(env, lead) {
   return true;
 }
 
+async function storeLead(env, lead) {
+  if (!env.PILOT_REQUESTS_DB) return false;
+
+  await env.PILOT_REQUESTS_DB.batch([
+    env.PILOT_REQUESTS_DB.prepare(
+      `CREATE TABLE IF NOT EXISTS pilot_requests (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL,
+        company TEXT NOT NULL,
+        role TEXT,
+        workflow TEXT NOT NULL,
+        page TEXT,
+        user_agent TEXT,
+        ip TEXT,
+        submitted_at TEXT NOT NULL
+      )`
+    ),
+    env.PILOT_REQUESTS_DB.prepare(
+      `CREATE INDEX IF NOT EXISTS idx_pilot_requests_submitted_at
+        ON pilot_requests(submitted_at)`
+    ),
+  ]);
+
+  await env.PILOT_REQUESTS_DB.prepare(
+    `INSERT INTO pilot_requests (
+      id,
+      name,
+      email,
+      company,
+      role,
+      workflow,
+      page,
+      user_agent,
+      ip,
+      submitted_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  )
+    .bind(
+      crypto.randomUUID(),
+      lead.name,
+      lead.email,
+      lead.company,
+      lead.role,
+      lead.workflow,
+      lead.page,
+      lead.userAgent,
+      lead.ip,
+      lead.submittedAt
+    )
+    .run();
+
+  return true;
+}
+
 async function sendResendEmail(env, lead) {
   if (!env.RESEND_API_KEY || !env.PILOT_REQUEST_TO || !env.PILOT_REQUEST_FROM) return false;
 
@@ -116,10 +171,11 @@ export async function onRequestPost({ request, env }) {
   }
 
   try {
+    const storedInD1 = await storeLead(env, lead);
     const deliveredByWebhook = await sendWebhook(env, lead);
     const deliveredByEmail = await sendResendEmail(env, lead);
 
-    if (!deliveredByWebhook && !deliveredByEmail) {
+    if (!storedInD1 && !deliveredByWebhook && !deliveredByEmail) {
       return json(
         {
           ok: false,

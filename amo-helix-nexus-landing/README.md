@@ -36,7 +36,13 @@ Then open `http://localhost:8080`.
 
 The pilot form posts to `/api/pilot-request`, implemented in `functions/api/pilot-request.js`.
 
-Configure at least one delivery path in Cloudflare Pages environment variables:
+Configure at least one delivery path in Cloudflare Pages.
+
+### Cloudflare D1 storage
+
+- Create a D1 database for pilot requests.
+- Add it to the Pages project as a D1 binding named `PILOT_REQUESTS_DB`.
+- The function creates the `pilot_requests` table automatically on first successful submission.
 
 ### Webhook delivery
 
