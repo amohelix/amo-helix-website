@@ -91,7 +91,7 @@ document.querySelector('#pilot-form').addEventListener('submit', event => {
   const formData = new FormData(form);
   const payload = Object.fromEntries(formData.entries());
 
-  status.classList.remove('error');
+  status.classList.remove('error', 'success');
   status.textContent = 'Sending your pilot request...';
   submitButton.disabled = true;
   submitButton.textContent = 'Sending request';
@@ -110,8 +110,8 @@ document.querySelector('#pilot-form').addEventListener('submit', event => {
         throw new Error(result.message || 'We could not send the request. Please try again.');
       }
 
-      const company = form.elements.company.value.trim();
-      status.textContent = `Thanks${company ? `, ${company}` : ''}. Your pilot request was sent.`;
+      status.classList.add('success');
+      status.textContent = 'Request received. We will review it and follow up.';
       form.reset();
     })
     .catch(error => {

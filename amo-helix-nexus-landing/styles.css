@@ -326,7 +326,8 @@ blockquote { margin: 18px 34px 28px; font-size: 1.1rem; line-height: 1.7; color:
 .full-field { grid-column: 1 / -1; }
 .bot-field { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 .pilot-form button[disabled] { opacity: .68; cursor: wait; transform: none; }
-.form-status { margin: 0; font-size: .8rem; color: var(--green); min-height: 1.2em; }
+.form-status { margin: 0; font-size: .8rem; color: #8fa0b6; min-height: 1.2em; }
+.form-status.success { color: #9fcef5; }
 .form-status.error { color: var(--danger); }
 
 .admin-page { min-height: 100vh; }
