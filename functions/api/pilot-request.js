@@ -103,7 +103,32 @@ async function sendWebhook(env, lead) {
   return true;
 }
 
-async function sendResendEmail(env, lead) {
+async function sendResendEmail(env, message) {
+  if (!env.RESEND_API_KEY || !env.PILOT_REQUEST_FROM) return false;
+
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      authorization: `Bearer ${env.RESEND_API_KEY}`,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      from: env.PILOT_REQUEST_FROM,
+      to: [message.to],
+      reply_to: message.replyTo,
+      subject: message.subject,
+      text: message.text,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Pilot request email provider rejected the submission.");
+  }
+
+  return true;
+}
+
+async function sendInternalPilotEmail(env, lead) {
   const to = clean(env.PILOT_REQUEST_TO, 254) || DEFAULT_PILOT_REQUEST_TO;
 
   if (!env.RESEND_API_KEY || !env.PILOT_REQUEST_FROM) return false;
@@ -122,26 +147,40 @@ async function sendResendEmail(env, lead) {
     `IP: ${lead.ip || "Unknown"}`,
   ].join("\n");
 
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      authorization: `Bearer ${env.RESEND_API_KEY}`,
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      from: env.PILOT_REQUEST_FROM,
-      to: [to],
-      reply_to: lead.email,
-      subject,
-      text,
-    }),
+  return sendResendEmail(env, {
+    to,
+    replyTo: lead.email,
+    subject,
+    text,
   });
+}
 
-  if (!response.ok) {
-    throw new Error("Pilot request email provider rejected the submission.");
-  }
+async function sendRequesterConfirmationEmail(env, lead) {
+  const replyTo = clean(env.PILOT_REQUEST_TO, 254) || DEFAULT_PILOT_REQUEST_TO;
 
-  return true;
+  if (!env.RESEND_API_KEY || !env.PILOT_REQUEST_FROM) return false;
+
+  const subject = "AMO Helix pilot request received";
+  const text = [
+    `Hi ${lead.name},`,
+    "",
+    "We received your AMO Helix pilot request.",
+    "",
+    "What we have on file:",
+    `Company: ${lead.company}`,
+    `Workflow: ${lead.workflow}`,
+    "",
+    "We will review the workflow and follow up with the next step.",
+    "",
+    "AMO Helix",
+  ].join("\n");
+
+  return sendResendEmail(env, {
+    to: lead.email,
+    replyTo,
+    subject,
+    text,
+  });
 }
 
 async function sendFormSubmitEmail(env, lead) {
@@ -217,9 +256,15 @@ export async function onRequestPost({ request, env }) {
     }
 
     try {
-      deliveredByEmail = await sendResendEmail(env, lead);
+      deliveredByEmail = await sendInternalPilotEmail(env, lead);
     } catch (error) {
       deliveredByEmail = false;
+    }
+
+    try {
+      await sendRequesterConfirmationEmail(env, lead);
+    } catch (error) {
+      // The lead has already been saved and the internal alert remains the source of truth.
     }
 
     try {

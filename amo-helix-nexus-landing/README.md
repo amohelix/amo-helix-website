@@ -64,7 +64,7 @@ Recent requests can be reviewed at `/pilot-requests.html`. The private inbox cal
 - `PILOT_REQUEST_TO`: inbox that receives pilot requests. Defaults to `frameleads@gmail.com`.
 - `PILOT_REQUEST_FROM`: verified sender, for example `AMO Helix <pilot@amohelix.com>`.
 
-If Resend is not configured, the function falls back to FormSubmit server-side delivery to `PILOT_REQUEST_TO`. FormSubmit may send a first-use confirmation email to the recipient before live notifications are delivered.
+When Resend is configured, the function sends the internal lead notification to `PILOT_REQUEST_TO` and a confirmation email to the person who submitted the form. If Resend is not configured, the function falls back to FormSubmit server-side delivery to `PILOT_REQUEST_TO`. FormSubmit may send a first-use confirmation email to the recipient before live notifications are delivered.
 
 - `PILOT_REQUEST_DISABLE_FORMSUBMIT`: set to `true` to disable the no-key FormSubmit fallback.
 
