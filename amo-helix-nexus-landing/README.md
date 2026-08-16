@@ -13,6 +13,7 @@ A responsive, dependency-free landing page for **Nexus by AMO Helix**.
 - Private pilot request inbox and CSV export
 - Mobile navigation
 - Accessibility basics and reduced-motion support
+- Public TestFlight synthetic-staging pilot privacy notice at `/privacy`
 - Favicons and brand imagery
 
 ## Preview locally
@@ -68,9 +69,28 @@ When Resend is configured, the function sends the internal lead notification to 
 
 - `PILOT_REQUEST_DISABLE_FORMSUBMIT`: set to `true` to disable the no-key FormSubmit fallback.
 
+## Privacy notice route
+
+The publication-ready source for the limited TestFlight synthetic-staging
+pilot notice is `privacy/index.html`. Cloudflare Pages route handling is fixed
+in `_redirects`: `/privacy` serves the notice and the legacy
+`/privacy-policy` path redirects to the canonical route.
+
+Validate it before any deployment:
+
+```bash
+python3 scripts/validate_privacy_notice.py
+python3 -m unittest tests/test_privacy_notice.py
+```
+
+Publishing the notice requires a separate release approval. The notice is not
+a substitute for the broader legal/privacy review required before a real-data
+customer pilot.
+
 ## Before public launch
 
-- Add final legal pages: Privacy, Terms, Cookie Notice, and Accessibility.
+- Complete the broader legal pages and review needed beyond the limited
+  TestFlight synthetic-staging privacy notice.
 - Confirm trademark and domain clearance.
 - Replace any product statements that are not yet implemented with verified launch capabilities.
 - Add analytics only after selecting a privacy approach.
