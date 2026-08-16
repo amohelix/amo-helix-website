@@ -1,4 +1,4 @@
-# AMO Helix — Nexus Landing Page
+# AMO Helix Website
 
 A responsive, dependency-free landing page for **Nexus by AMO Helix**.
 
@@ -27,6 +27,8 @@ python3 -m http.server 8080
 Then open `http://localhost:8080`.
 
 ## Deploy to Cloudflare Pages
+
+Authoritative Cloudflare Pages project: **amo-helix-website**.
 
 1. Upload this folder to a Git repository, or use Cloudflare Pages direct upload.
 2. Framework preset: **None**.
@@ -72,9 +74,10 @@ When Resend is configured, the function sends the internal lead notification to 
 ## Privacy notice route
 
 The publication-ready source for the limited TestFlight synthetic-staging
-pilot notice is `privacy/index.html`. Cloudflare Pages route handling is fixed
-in `_redirects`: `/privacy` serves the notice and the legacy
-`/privacy-policy` path redirects to the canonical route.
+pilot notice is the standalone `privacy.html` file. Cloudflare Pages serves
+that file directly at the extensionless `/privacy` route. `_redirects`
+canonicalizes `/privacy/` and both legacy `/privacy-policy` variants to
+`/privacy` with permanent redirects.
 
 Validate it before any deployment:
 

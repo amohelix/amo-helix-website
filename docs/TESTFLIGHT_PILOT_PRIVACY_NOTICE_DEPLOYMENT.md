@@ -5,11 +5,21 @@ Status: source prepared; publication requires separate release approval
 ## Authority and route
 
 - Repository: `amohelix/amo-helix-website`
-- Cloudflare Pages project: `amo-helix-nexus-landing`
+- Cloudflare Pages project: `amo-helix-website`
 - Canonical URL: `https://amohelix.com/privacy`
 - Legacy route: `https://amohelix.com/privacy-policy` redirects to the canonical URL
-- Source: `amo-helix-nexus-landing/privacy/index.html`
-- Route contract: `amo-helix-nexus-landing/_redirects`
+- Source: standalone `privacy.html` in the website output directory
+- Route contract: `_redirects` in the website output directory
+- Pages behavior: standalone HTML files are served at extensionless paths, so
+  `privacy.html` is the direct `200` source for `/privacy`
+- Edge transformation guard: the approved contact link is wrapped in the
+  documented `email_off` comments so zone-level obfuscation does not inject a
+  decoder script into this notice
+
+Cloudflare references:
+
+- [Serving Pages](https://developers.cloudflare.com/pages/configuration/serving-pages/)
+- [Email Address Obfuscation](https://developers.cloudflare.com/waf/tools/scrape-shield/email-address-obfuscation/)
 
 The parent website commit is byte-identical to the live homepage at the source
 checkpoint. This change does not alter Cloudflare, DNS, Pages settings, runtime
@@ -34,8 +44,9 @@ regional infrastructure, or country-specific product fork.
    and the live homepage still matches the sealed parent identity.
 3. Deploy the accepted commit once through the existing Pages workflow without
    changing DNS, bindings, functions, or environment variables.
-4. Verify `/privacy` returns HTTP 200 with the exact canonical title and
-   content hash, `/privacy-policy` redirects to `/privacy`, the homepage footer
+4. Verify `/privacy` returns HTTP 200 directly, `/privacy/` and both
+   `/privacy-policy` variants permanently redirect to `/privacy`, the notice
+   retains the exact canonical title and approved content, the homepage footer
    link works, and no other route changed.
 5. Record the deployment and post-deploy route evidence before entering the
    URL in App Store Connect under a separately authorized D1-E window.
